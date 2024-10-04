@@ -93,7 +93,6 @@ st.markdown(f"""
 - **Fall**: {fall_borrowers}
 """)
 
-# Visualisasi presentase jumlah peminjam registered dan casual
 total_casual = all_data_df['casual'].sum()
 total_registered = all_data_df['registered'].sum()
 
@@ -107,5 +106,12 @@ fig4, ax4 = plt.subplots()
 ax4.pie(votes, labels=labels, autopct='%1.1f%%', colors=colors, explode=explode)
 ax4.set_title('Presentase Peminjam Registered vs Casual')
 st.pyplot(fig4)
+
+# Menampilkan jumlah peminjam registered dan casual
+st.markdown(f"""
+**Jumlah Peminjam:**
+- **Registered**: {total_registered}
+- **Casual**: {total_casual}
+""")
 
 st.caption('Copyright © Destyawan 2024')
