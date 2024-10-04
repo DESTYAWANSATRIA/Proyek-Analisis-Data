@@ -44,10 +44,6 @@ ax1.set_ylabel('Average Rentals (cnt)', fontsize=12)
 ax1.grid(True)
 st.pyplot(fig1)
 
-# Menampilkan jumlah rata-rata peminjam berdasarkan temperatur
-average_borrowers_count = avg_hourly_borrowers_by_temp['cnt'].mean()
-st.markdown(f"**Jumlah Rata-rata Peminjam berdasarkan Temperatur**: {average_borrowers_count:.2f}")
-
 # Menghitung jumlah peminjam per bulan di tahun 2011 dan 2012
 all_data_df['dteday'] = all_data_df['dteday'].astype(str)
 all_data_df['year'] = all_data_df['dteday'].str[:4]
@@ -67,12 +63,14 @@ ax2.legend(title='Tahun')
 ax2.grid(axis='y', linestyle='--', alpha=0.7)
 st.pyplot(fig2)
 
-# Menampilkan jumlah peminjam per bulan
-monthly_total_borrowers = monthly_borrowers['cnt'].sum()
-st.markdown(f"**Jumlah Total Peminjam per Bulan**: {monthly_total_borrowers}")
-
 # Menghitung jumlah peminjam berdasarkan season
 avg_hourly_borrowers_by_season = all_data_df.groupby('season')['cnt'].sum().reset_index()
+
+# Mendapatkan jumlah peminjam untuk setiap musim
+winter_borrowers = avg_hourly_borrowers_by_season.loc[avg_hourly_borrowers_by_season['season'] == 1, 'cnt'].values[0]
+spring_borrowers = avg_hourly_borrowers_by_season.loc[avg_hourly_borrowers_by_season['season'] == 2, 'cnt'].values[0]
+summer_borrowers = avg_hourly_borrowers_by_season.loc[avg_hourly_borrowers_by_season['season'] == 3, 'cnt'].values[0]
+fall_borrowers = avg_hourly_borrowers_by_season.loc[avg_hourly_borrowers_by_season['season'] == 4, 'cnt'].values[0]
 
 # Bar plot untuk jumlah peminjam per season
 st.subheader('Jumlah Peminjam Berdasarkan Season')
@@ -87,8 +85,13 @@ ax3.set_title('Jumlah Peminjam Berdasarkan Season', fontsize=14)
 st.pyplot(fig3)
 
 # Menampilkan jumlah peminjam berdasarkan season
-season_total_borrowers = avg_hourly_borrowers_by_season['cnt'].sum()
-st.markdown(f"**Jumlah Total Peminjam Berdasarkan Season**: {season_total_borrowers}")
+st.markdown(f"""
+**Jumlah Peminjam per Musim:**
+- **Winter**: {winter_borrowers}
+- **Spring**: {spring_borrowers}
+- **Summer**: {summer_borrowers}
+- **Fall**: {fall_borrowers}
+""")
 
 # Visualisasi presentase jumlah peminjam registered dan casual
 total_casual = all_data_df['casual'].sum()
@@ -104,9 +107,5 @@ fig4, ax4 = plt.subplots()
 ax4.pie(votes, labels=labels, autopct='%1.1f%%', colors=colors, explode=explode)
 ax4.set_title('Presentase Peminjam Registered vs Casual')
 st.pyplot(fig4)
-
-# Menampilkan jumlah peminjam registered dan casual
-st.markdown(f"**Jumlah Peminjam Registered**: {total_registered}")
-st.markdown(f"**Jumlah Peminjam Casual**: {total_casual}")
 
 st.caption('Copyright © Destyawan 2024')
