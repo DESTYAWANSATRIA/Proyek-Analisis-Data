@@ -4,7 +4,7 @@ import seaborn as sns
 import streamlit as st
 
 # Membaca dataset dari 'all_data.csv'
-all_data_df = pd.read_csv("all_data.csv")
+all_data_df = pd.read_csv("https://github.com/DESTYAWANSATRIA/Proyek-Analisis-Data/blob/main/dashboard/all_data.csv")
 
 # Menghitung rata-rata jumlah peminjam berdasarkan temperatur
 avg_hourly_borrowers_by_temp = all_data_df.groupby('temp')['cnt'].mean().reset_index()
