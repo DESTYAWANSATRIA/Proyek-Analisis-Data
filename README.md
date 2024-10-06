@@ -1,4 +1,4 @@
-# Dashboard ✨
+# Analysis Dashboard ✨
 
 ## Setup Environment - Anaconda
 ```
