@@ -34,6 +34,8 @@ st.markdown("""
     <h1 class="title">Analisis Peminjaman Sepeda</h1>
     """, unsafe_allow_html=True)
 
+total_users = all_data_df['cnt'].sum()
+st.markdown(f"**Jumlah Pengguna :** {total_users} pengguna")
 # Scatter plot untuk jumlah peminjam berdasarkan temperatur
 st.subheader('Rata-rata Jumlah Peminjam Berdasarkan Temperatur (Hourly Data)')
 fig1, ax1 = plt.subplots(figsize=(10, 6))
@@ -93,7 +95,7 @@ st.markdown(f"""
 - **Fall**: {fall_borrowers}
 """)
 
-# 1. Rata-rata jumlah pengguna berdasarkan kondisi cuaca (weathersit)
+#Rata-rata jumlah pengguna berdasarkan kondisi cuaca (weathersit)
 weather_grouped = all_data_df.groupby('weathersit')['cnt'].mean().reset_index()
 
 # Membuat bar plot
@@ -103,10 +105,12 @@ ax4.bar(weather_grouped['weathersit'].astype(str), weather_grouped['cnt'], color
 ax4.set_title('Rata-rata Jumlah Pengguna Berdasarkan Kondisi Cuaca')
 ax4.set_xlabel('Kondisi Cuaca (1: Cerah, 2: Mendung, 3: Hujan)')
 ax4.set_ylabel('Rata-rata Jumlah Pengguna')
-ax4.set.xticks(rotation=0)
+ax4.set_xticks(range(len(weather_grouped['weathersit'])))  # Menetapkan ticks
+ax4.set_xticklabels(weather_grouped['weathersit'].astype(str), rotation=0)  # Menetapkan label dan rotasi
+
 st.pyplot(fig4)
 
-# 2. Perbandingan pengguna kasual dan terdaftar per bulan
+#Perbandingan pengguna kasual dan terdaftar per bulan
 all_data_df['dteday'] = pd.to_datetime(all_data_df['dteday'])
 all_data_df['year_month'] = all_data_df['dteday'].dt.to_period('M')
 
@@ -123,27 +127,36 @@ ax5.set_title('Perbandingan Pengguna Kasual dan Terdaftar per Bulan')
 ax5.set_xlabel('Bulan')
 ax5.set_ylabel('Jumlah Pengguna')
 ax5.legend()
-ax5.set_xticks(rotation=45)
+
+# Atur ticks sumbu x dan rotasi
+ax5.set_xticks(range(len(monthly_grouped['year_month'])))  # Menetapkan ticks
+ax5.set_xticklabels(monthly_grouped['year_month'].astype(str), rotation=45)  # Menetapkan label dan rotasi
+
 st.pyplot(fig5)
 
-# 3. Persentase perubahan pengguna terdaftar dan kasual per bulan
+
+#Persentase perubahan pengguna terdaftar dan kasual per bulan
 monthly_grouped['registered_change'] = monthly_grouped['registered'].pct_change() * 100
 monthly_grouped['casual_change'] = monthly_grouped['casual'].pct_change() * 100
 
 st.subheader('Persentase Perubahan Pengguna Terdaftar dan Kasual per Bulan')
 fig6, ax6 = plt.subplots(figsize=(12, 6))
-ax6.bar(monthly_grouped['year_month'].astype(str), monthly_grouped['registered_change'], label='Perubahan Pengguna Terdaftar (%)', color='#87CEFA')
-ax6.bar(monthly_grouped['year_month'].astype(str), monthly_grouped['casual_change'], label='Perubahan Pengguna Kasual (%)', color='#D3D3D3', bottom=monthly_grouped['registered_change'])
+ax6.bar(monthly_grouped['year_month'].astype(str), monthly_grouped['registered_change'], 
+        label='Perubahan Pengguna Terdaftar (%)', color='#87CEFA')
+ax6.bar(monthly_grouped['year_month'].astype(str), monthly_grouped['casual_change'], 
+        label='Perubahan Pengguna Kasual (%)', color='#D3D3D3', 
+        bottom=monthly_grouped['registered_change'])
+
 ax6.set_title('Persentase Perubahan Pengguna Terdaftar dan Kasual per Bulan')
 ax6.set_xlabel('Bulan')
 ax6.set_ylabel('Persentase Perubahan (%)')
 ax6.legend()
-ax6.set_xticks(rotation=45)
+ax6.set_xticks(range(len(monthly_grouped['year_month'])))  # Menetapkan posisi ticks
+ax6.set_xticklabels(monthly_grouped['year_month'].astype(str), rotation=45)  # Menetapkan label dan rotasi
 st.pyplot(fig6)
 
-# 4. Rata-rata pengguna berdasarkan jenis hari
+#Rata-rata pengguna berdasarkan jenis hari
 avg_users = all_data_df.groupby('workingday')['cnt'].mean().reset_index()
-
 # Membuat bar plot
 st.subheader('Rata-rata Jumlah Pengguna Berdasarkan Hari Kerja/Hari Libur')
 fig7, ax7 = plt.subplots(figsize=(8, 5))
@@ -151,5 +164,9 @@ ax7.bar(avg_users['workingday'].astype(str), avg_users['cnt'], color=['#87CEFA',
 ax7.set_title('Rata-rata Jumlah Pengguna Berdasarkan Hari Kerja/Hari Libur')
 ax7.set_xlabel('Hari Kerja (0: Libur, 1: Kerja)')
 ax7.set_ylabel('Rata-rata Jumlah Pengguna')
-ax7.set_xticks(rotation=0)
+
+ax7.set_xticks(range(len(avg_users['workingday'])))  # Menetapkan posisi ticks
+ax7.set_xticklabels(['Libur', 'Kerja'], rotation=0)  # Menetapkan label dan rotasi
+
 st.pyplot(fig7)
+st.caption('\nCopyright © Destyawan 2024')
