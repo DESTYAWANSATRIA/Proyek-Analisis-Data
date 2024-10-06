@@ -35,7 +35,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # Scatter plot untuk jumlah peminjam berdasarkan temperatur
-st.subheader('\nRata-rata Jumlah Peminjam Berdasarkan Temperatur (Hourly Data)')
+st.subheader('Rata-rata Jumlah Peminjam Berdasarkan Temperatur (Hourly Data)')
 fig1, ax1 = plt.subplots(figsize=(10, 6))
 ax1.scatter(avg_hourly_borrowers_by_temp['temp'], avg_hourly_borrowers_by_temp['cnt'], color='blue', alpha=0.7)
 ax1.set_title('Average Bike Rentals based on Temperature (Hour)', fontsize=14)
@@ -93,50 +93,63 @@ st.markdown(f"""
 - **Fall**: {fall_borrowers}
 """)
 
-#Rata-rata jumlah peminjam berdasarkan cuaca
-avg_borrowers_by_weather = all_data_df.groupby('weathersit')['cnt'].mean().reset_index()
+# 1. Rata-rata jumlah pengguna berdasarkan kondisi cuaca (weathersit)
+weather_grouped = all_data_df.groupby('weathersit')['cnt'].mean().reset_index()
 
-st.subheader('Rata-rata Jumlah Peminjam Berdasarkan Cuaca')
-fig4, ax4 = plt.subplots(figsize=(8, 5))
-sns.barplot(data=avg_borrowers_by_weather, x='weathersit', y='cnt', palette='Blues', ax=ax4)
-ax4.set_title('Rata-rata Peminjam Berdasarkan Cuaca', fontsize=14)
-ax4.set_xlabel('Kondisi Cuaca (1: Cerah, 2: Mendung, 3: Hujan)', fontsize=12)
-ax4.set_ylabel('Rata-rata Peminjam', fontsize=12)
+# Membuat bar plot
+st.subheader('Rata-rata Jumlah Pengguna Berdasarkan Kondisi Cuaca')
+fig4, ax4 = plt.subplots(figsize=(10, 6))
+ax4.bar(weather_grouped['weathersit'].astype(str), weather_grouped['cnt'], color='#87CEFA')
+ax4.set_title('Rata-rata Jumlah Pengguna Berdasarkan Kondisi Cuaca')
+ax4.set_xlabel('Kondisi Cuaca (1: Cerah, 2: Mendung, 3: Hujan)')
+ax4.set_ylabel('Rata-rata Jumlah Pengguna')
+ax4.set.xticks(rotation=0)
 st.pyplot(fig4)
 
-# Jumlah peminjam berdasarkan jenis hari
-avg_borrowers_by_daytype = all_data_df.groupby('workingday')['cnt'].mean().reset_index()
+# 2. Perbandingan pengguna kasual dan terdaftar per bulan
+all_data_df['dteday'] = pd.to_datetime(all_data_df['dteday'])
+all_data_df['year_month'] = all_data_df['dteday'].dt.to_period('M')
 
-st.subheader('Rata-rata Jumlah Peminjam Berdasarkan Jenis Hari')
-fig5, ax5 = plt.subplots(figsize=(8, 5))
-sns.barplot(data=avg_borrowers_by_daytype, x='workingday', y='cnt', palette='Set1', ax=ax5)
-ax5.set_title('Rata-rata Peminjam Berdasarkan Jenis Hari', fontsize=14)
-ax5.set_xlabel('Hari Kerja (0: Libur, 1: Kerja)', fontsize=12)
-ax5.set_ylabel('Rata-rata Peminjam', fontsize=12)
+# Menghitung jumlah pengguna terdaftar dan kasual per bulan
+monthly_grouped = all_data_df.groupby('year_month').agg({'registered': 'sum', 'casual': 'sum'}).reset_index()
+
+# Membuat stacked bar chart per bulan
+st.subheader('Perbandingan Pengguna Kasual dan Terdaftar per Bulan')
+fig5, ax5 = plt.subplots(figsize=(12, 6))
+ax5.bar(monthly_grouped['year_month'].astype(str), monthly_grouped['registered'], label='Pengguna Terdaftar', color='#87CEFA')
+ax5.bar(monthly_grouped['year_month'].astype(str), monthly_grouped['casual'], 
+        bottom=monthly_grouped['registered'], label='Pengguna Kasual', color='#D3D3D3')
+ax5.set_title('Perbandingan Pengguna Kasual dan Terdaftar per Bulan')
+ax5.set_xlabel('Bulan')
+ax5.set_ylabel('Jumlah Pengguna')
+ax5.legend()
+ax5.set_xticks(rotation=45)
 st.pyplot(fig5)
 
-# Distribusi jumlah peminjam per jam
-hourly_borrowers = all_data_df.groupby('hr')['cnt'].sum().reset_index()
+# 3. Persentase perubahan pengguna terdaftar dan kasual per bulan
+monthly_grouped['registered_change'] = monthly_grouped['registered'].pct_change() * 100
+monthly_grouped['casual_change'] = monthly_grouped['casual'].pct_change() * 100
 
-st.subheader('Distribusi Jumlah Peminjam per Jam')
-fig6, ax6 = plt.subplots(figsize=(10, 6))
-sns.lineplot(data=hourly_borrowers, x='hr', y='cnt', marker='o', ax=ax6, color='purple')
-ax6.set_title('Distribusi Jumlah Peminjam per Jam', fontsize=14)
-ax6.set_xlabel('Jam', fontsize=12)
-ax6.set_ylabel('Jumlah Peminjam', fontsize=12)
+st.subheader('Persentase Perubahan Pengguna Terdaftar dan Kasual per Bulan')
+fig6, ax6 = plt.subplots(figsize=(12, 6))
+ax6.bar(monthly_grouped['year_month'].astype(str), monthly_grouped['registered_change'], label='Perubahan Pengguna Terdaftar (%)', color='#87CEFA')
+ax6.bar(monthly_grouped['year_month'].astype(str), monthly_grouped['casual_change'], label='Perubahan Pengguna Kasual (%)', color='#D3D3D3', bottom=monthly_grouped['registered_change'])
+ax6.set_title('Persentase Perubahan Pengguna Terdaftar dan Kasual per Bulan')
+ax6.set_xlabel('Bulan')
+ax6.set_ylabel('Persentase Perubahan (%)')
+ax6.legend()
+ax6.set_xticks(rotation=45)
 st.pyplot(fig6)
 
-#Persentase perubahan peminjam per bulan
-monthly_borrowers['change'] = monthly_borrowers['cnt'].pct_change() * 100
+# 4. Rata-rata pengguna berdasarkan jenis hari
+avg_users = all_data_df.groupby('workingday')['cnt'].mean().reset_index()
 
-st.subheader('Persentase Perubahan Peminjam per Bulan')
-fig7, ax7 = plt.subplots(figsize=(12, 6))
-sns.lineplot(data=monthly_borrowers, x='month', y='change', marker='o', hue='year', ax=ax7, palette='dark')
-ax7.set_title('Persentase Perubahan Peminjam per Bulan', fontsize=14)
-ax7.set_xlabel('Bulan', fontsize=12)
-ax7.set_ylabel('Persentase Perubahan (%)', fontsize=12)
-ax7.set_xticks(range(12))
-ax7.set_xticklabels(['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'])
+# Membuat bar plot
+st.subheader('Rata-rata Jumlah Pengguna Berdasarkan Hari Kerja/Hari Libur')
+fig7, ax7 = plt.subplots(figsize=(8, 5))
+ax7.bar(avg_users['workingday'].astype(str), avg_users['cnt'], color=['#87CEFA', '#D3D3D3'])
+ax7.set_title('Rata-rata Jumlah Pengguna Berdasarkan Hari Kerja/Hari Libur')
+ax7.set_xlabel('Hari Kerja (0: Libur, 1: Kerja)')
+ax7.set_ylabel('Rata-rata Jumlah Pengguna')
+ax7.set_xticks(rotation=0)
 st.pyplot(fig7)
-
-st.caption('Copyright © Destyawan 2024')
