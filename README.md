@@ -2,21 +2,20 @@
 
 ## Setup Environment - Anaconda
 ```
-conda create --name main-ds python=3.9
-conda activate main-ds
-pip install -r requirements.txt
+conda create --name proyek_analisis_data python=3.11
+conda activate proyek_analisis_data
+pip install -r submission/requirements.txt
 ```
 
 ## Setup Environment - Shell/Terminal
 ```
-mkdir proyek_analisis_data
-cd proyek_analisis_data
-pipenv install
-pipenv shell
-pip install -r requirements.txt
+conda create --name proyek_analisis_data python=3.11
+conda activate proyek_analisis_data
+pip install -r submission/requirements.txt
 ```
 
 ## Run steamlit app
 ```
-streamlit run dashboard.py
+cd submission/dashboard
+streamlit run Dashboard.py
 ```
