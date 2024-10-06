@@ -93,25 +93,50 @@ st.markdown(f"""
 - **Fall**: {fall_borrowers}
 """)
 
-total_casual = all_data_df['casual'].sum()
-total_registered = all_data_df['registered'].sum()
+#Rata-rata jumlah peminjam berdasarkan cuaca
+avg_borrowers_by_weather = all_data_df.groupby('weathersit')['cnt'].mean().reset_index()
 
-st.subheader('Presentase Jumlah Peminjam Registered dan Casual')
-labels = ("Registered", "Casual")
-votes = (total_registered, total_casual)
-colors = ('#87CEFA', '#D3D3D3')
-explode = (0.1, 0)
-
-fig4, ax4 = plt.subplots()
-ax4.pie(votes, labels=labels, autopct='%1.1f%%', colors=colors, explode=explode)
-ax4.set_title('Presentase Peminjam Registered vs Casual')
+st.subheader('Rata-rata Jumlah Peminjam Berdasarkan Cuaca')
+fig4, ax4 = plt.subplots(figsize=(8, 5))
+sns.barplot(data=avg_borrowers_by_weather, x='weathersit', y='cnt', palette='Blues', ax=ax4)
+ax4.set_title('Rata-rata Peminjam Berdasarkan Cuaca', fontsize=14)
+ax4.set_xlabel('Kondisi Cuaca (1: Cerah, 2: Mendung, 3: Hujan)', fontsize=12)
+ax4.set_ylabel('Rata-rata Peminjam', fontsize=12)
 st.pyplot(fig4)
 
-# Menampilkan jumlah peminjam registered dan casual
-st.markdown(f"""
-**Jumlah Peminjam:**
-- **Registered**: {total_registered}
-- **Casual**: {total_casual}
-""")
+# Jumlah peminjam berdasarkan jenis hari
+avg_borrowers_by_daytype = all_data_df.groupby('workingday')['cnt'].mean().reset_index()
+
+st.subheader('Rata-rata Jumlah Peminjam Berdasarkan Jenis Hari')
+fig5, ax5 = plt.subplots(figsize=(8, 5))
+sns.barplot(data=avg_borrowers_by_daytype, x='workingday', y='cnt', palette='Set1', ax=ax5)
+ax5.set_title('Rata-rata Peminjam Berdasarkan Jenis Hari', fontsize=14)
+ax5.set_xlabel('Hari Kerja (0: Libur, 1: Kerja)', fontsize=12)
+ax5.set_ylabel('Rata-rata Peminjam', fontsize=12)
+st.pyplot(fig5)
+
+# Distribusi jumlah peminjam per jam
+hourly_borrowers = all_data_df.groupby('hr')['cnt'].sum().reset_index()
+
+st.subheader('Distribusi Jumlah Peminjam per Jam')
+fig6, ax6 = plt.subplots(figsize=(10, 6))
+sns.lineplot(data=hourly_borrowers, x='hr', y='cnt', marker='o', ax=ax6, color='purple')
+ax6.set_title('Distribusi Jumlah Peminjam per Jam', fontsize=14)
+ax6.set_xlabel('Jam', fontsize=12)
+ax6.set_ylabel('Jumlah Peminjam', fontsize=12)
+st.pyplot(fig6)
+
+#Persentase perubahan peminjam per bulan
+monthly_borrowers['change'] = monthly_borrowers['cnt'].pct_change() * 100
+
+st.subheader('Persentase Perubahan Peminjam per Bulan')
+fig7, ax7 = plt.subplots(figsize=(12, 6))
+sns.lineplot(data=monthly_borrowers, x='month', y='change', marker='o', hue='year', ax=ax7, palette='dark')
+ax7.set_title('Persentase Perubahan Peminjam per Bulan', fontsize=14)
+ax7.set_xlabel('Bulan', fontsize=12)
+ax7.set_ylabel('Persentase Perubahan (%)', fontsize=12)
+ax7.set_xticks(range(12))
+ax7.set_xticklabels(['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'])
+st.pyplot(fig7)
 
 st.caption('Copyright © Destyawan 2024')
