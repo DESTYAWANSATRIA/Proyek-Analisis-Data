@@ -70,8 +70,16 @@ Fitur utama:
 ### 2️⃣ Visualisasi yang Dibangun
 
 - Scatter Plot (temp vs cnt, hum vs cnt, windspeed vs cnt)
-- Pairplot  
-- Heatmap korelasi  
+  
+  <img width="553" height="397" alt="scatter Plot cnt vs temp" src="https://github.com/user-attachments/assets/bb647e65-45d7-497b-bcbb-e0ad345bfc24" />
+  <img width="553" height="397" alt="scatter Plot cnt vs hum" src="https://github.com/user-attachments/assets/7d83fff1-df19-4c6d-8bec-d0853a06ad63" />
+  <img width="553" height="397" alt="scatter Plot cnt vs windspeed" src="https://github.com/user-attachments/assets/17db8844-0277-4e3f-9b0b-00671c0b53ca" />
+
+- Pairplot
+  <img width="985" height="986" alt="Pairplot" src="https://github.com/user-attachments/assets/ff47fd59-0ab7-41fe-9aeb-be88ff003a38" />
+
+- Heatmap korelasi
+  <img width="982" height="903" alt="Correlation Heatmap" src="https://github.com/user-attachments/assets/320f7bc1-44a4-46ba-bf6b-b742bee27192" />
 - Partial correlation  
 
 ---
